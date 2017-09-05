@@ -6,7 +6,7 @@ public class SceneController : MonoBehaviour {
 
 	[SerializeField] private GameObject _BirdPrefab;
 	private GameObject Bird;
-	private int maxNumBirds = 20;
+	private int maxNumBirds = 5;
 
 	//Birds starting and ending coordinates
 	private float coordinateXStart;
@@ -41,7 +41,7 @@ public class SceneController : MonoBehaviour {
 
 
 	IEnumerator wait(){
-		yield return new WaitForSeconds (5f);
+		yield return new WaitForSeconds (10);
 	}
 
 	void getCoordinates(){
