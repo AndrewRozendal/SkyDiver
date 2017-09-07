@@ -5,20 +5,25 @@ using UnityEngine;
 public enum BirdState {Dead, Alive};
 
 public class BirdMove : MonoBehaviour {
+
     public bool debugMode = true;
     public float maxDistance = 100f;
-	public float birdSpeed;
+	private float birdSpeed;
+    public float maxSpeed = 10f;
+    public float minSpeed = 1f;
 	public float pushForce = 5.0f;
 	private BirdState state;
+    private Vector3 destination;
 
 	// Use this for initialization
-	void Start () {
+	public void Start () {
 		state = BirdState.Alive;
-		birdSpeed = Random.Range (1f, 20f);
+		birdSpeed = Random.Range (minSpeed, maxSpeed);
+        destination = getDestination();
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	public void Update () {
         if (state == BirdState.Alive) {
             //are we in bounds?
             bool inbounds = true;
@@ -50,12 +55,12 @@ public class BirdMove : MonoBehaviour {
                 inbounds = false;
             }
 
-            if (inbounds)
-            {
-                transform.Translate(Vector3.back * birdSpeed * Time.deltaTime);
-            } else
+            if (!inbounds)
             {
                 state = BirdState.Dead;
+            } else
+            {
+                Move();
             }	
 		}
 
@@ -65,14 +70,30 @@ public class BirdMove : MonoBehaviour {
 	}
 
     //Changes the state of the bird
-	public void ChangeState(BirdState state){
+	private void ChangeState(BirdState state){
 		this.state = state;
 		Debug.Log ("State= " + state);
 	}
 
     //Destroys the GameObject
-	public void Die (){
+	private void Die (){
 		Destroy (this.gameObject);
 		Debug.Log ("Dead");
 	}
+
+    private void Move()
+    {
+        if (debugMode) { Debug.Log("Moving bird to " + destination + " at speed " + birdSpeed); }
+        transform.Translate(destination * birdSpeed * Time.deltaTime);
+    }
+
+
+    //Generate random coordinates
+    private Vector3 getDestination()
+    {
+        float x = Random.Range(-10f, 10f);
+        float y = Random.Range(-10f, 10f);
+        float z = (maxDistance + 1) * -1;
+        return new Vector3(x, y, z);
+    }
 }

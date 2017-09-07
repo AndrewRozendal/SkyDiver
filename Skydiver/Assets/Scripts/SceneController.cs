@@ -4,50 +4,55 @@ using UnityEngine;
 
 public class SceneController : MonoBehaviour {
 
-	[SerializeField] private GameObject _BirdPrefab;
+    public class Coordinates
+    {
+        public Coordinates(float x, float y)
+        {
+            this.x = x;
+            this.y = y;
+        }
+        public float x { get; private set; }
+        public float y { get; private set; }
+    }
+
+    [SerializeField] private GameObject _BirdPrefab;
 	private GameObject Bird;
-	private int maxNumBirds = 5;
+	public int maxNumBirds = 5;
+    public float enemySpawnPlane = 30f;
 
-	//Birds starting and ending coordinates
-	private float coordinateXStart;
-	private float coordinateYStart;
+    //Array to hold the birds
+    private static GameObject[] _numBirds;
 
-
-
-
-	//Array to hold the birds
-	static GameObject[] _numBirds;
-
-
-
-	void Start () {
+	public void Start () {
 		_numBirds = new GameObject[maxNumBirds]; 
 	}
 	
 
-	void Update () {
+	public void Update () {
 		for (int i = 0; i < maxNumBirds; i++) {
 			wait ();
 			if (_numBirds [i] == null) {
-				getCoordinates ();
+                //Birds starting and ending coordinates
+                Coordinates origin = getCoordinates();
 				Bird = Instantiate (_BirdPrefab) as GameObject;
 				transform.Rotate (180, 0, 0);
 				_numBirds [i] = Bird;
-				Bird.transform.position = new Vector3 (coordinateXStart, coordinateYStart, 30);
+				Bird.transform.position = new Vector3 (origin.x, origin.y, enemySpawnPlane);
 			}
-
 		}
-}
+    }
 
-
-	IEnumerator wait(){
+	private IEnumerator wait(){
 		yield return new WaitForSeconds (10);
 	}
 
-	void getCoordinates(){
-		coordinateXStart = Random.Range (-6.6f, 6.6f);
-		coordinateYStart = Random.Range (-3.7f, 3.7f);
-
+    //generates coordinates for the enemies to spawn on
+	private Coordinates getCoordinates(){
+        
+		float x = Random.Range (-10f, 10f);
+		float y = Random.Range (-10f, 10f);
+        Coordinates origin = new Coordinates(x, y);
+        return origin;
 	}
 		
 }
