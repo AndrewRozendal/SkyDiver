@@ -7,13 +7,15 @@ public enum BirdState {Dead, Alive};
 public class BirdMove : MonoBehaviour {
 
     public bool debugMode = true;
-    public float maxDistance = 100f;
+    public float maxDistance = 10f;
 	private float birdSpeed;
     public float maxSpeed = 10f;
     public float minSpeed = 1f;
 	public float pushForce = 5.0f;
 	private BirdState state;
     private Vector3 destination;
+
+	public int quad { get; set; }
 
 	// Use this for initialization
 	public void Start () {
@@ -78,7 +80,9 @@ public class BirdMove : MonoBehaviour {
     //Destroys the GameObject
 	private void Die (){
 		Destroy (this.gameObject);
-		Debug.Log ("Dead");
+		if (debugMode) {
+			Debug.Log ("Dead");
+		}
 	}
 
     private void Move()
@@ -88,11 +92,33 @@ public class BirdMove : MonoBehaviour {
     }
 
 
-    //Generate random coordinates
+    //Generate random destination coordinates
     private Vector3 getDestination()
     {
-        float x = Random.Range(-10f, 10f);
-        float y = Random.Range(-10f, 10f);
+		//Pick the appropriate quadrant
+		float x = 0f;
+		float y = 0f;
+		switch (quad) {
+		case 1:
+			x = Random.Range (-10f, -5f);
+			y = Random.Range (-10f, -5f);
+			break;
+
+		case 2:
+			x = Random.Range (-10f, -5f);
+			y = Random.Range (5f, 10f);
+			break;
+
+		case 3:
+			x = Random.Range (5f, 10f);
+			y = Random.Range (5f, 10f);
+			break;
+		case 4:
+			x = Random.Range (5f, 10f);
+			y = Random.Range (-10f, -5f);
+			break;
+		}
+			
         float z = (maxDistance + 1) * -1;
         return new Vector3(x, y, z);
     }
