@@ -9,7 +9,7 @@ public class BirdMove : MonoBehaviour {
     public bool debugMode = true;
     public float maxDistance = 10f;
 	private float birdSpeed;
-    public float maxSpeed = 10f;
+    public float maxSpeed = 2f;
     public float minSpeed = 1f;
 	public float pushForce = 5.0f;
 	private BirdState state;
@@ -26,7 +26,7 @@ public class BirdMove : MonoBehaviour {
 	
 	// Update is called once per frame
 	public void Update () {
-        if (state == BirdState.Alive) {
+		if (state == BirdState.Alive) {
             //are we in bounds?
             bool inbounds = true;
             Transform location = this.GetComponent<Transform>();

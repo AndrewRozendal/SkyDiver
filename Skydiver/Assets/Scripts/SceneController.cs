@@ -15,45 +15,85 @@ public class SceneController : MonoBehaviour {
         public float y { get; private set; }
     }
 
+	// Birds
     [SerializeField] private GameObject _BirdPrefab;
 	private GameObject Bird;
 	public int maxNumBirds = 5;
+	private GameObject[] _birdList;
+
+	// V3BirdFormations
+	[SerializeField] private GameObject _V3BirdFormationPrefab;
+	private GameObject V3BirdFormation;
+	public int maxNumV3BirdFormations = 5;
+	private GameObject[] _V3BirdFormationList;
+
     public float enemySpawnPlane = 30f;
 	private int quad;
 	public int frequency = 15;
 	public bool debugMode = true;
 
-    //Array to hold the birds
-    private static GameObject[] _numBirds;
-
 	public void Start () {
-		_numBirds = new GameObject[maxNumBirds];
+		//Order matters
 		quad = 1;
+		Spawn (out _birdList, maxNumBirds, _BirdPrefab);  //Bird
+		Spawn (out _V3BirdFormationList, maxNumV3BirdFormations, _V3BirdFormationPrefab, true);  //V3BirdFormation
 	}
-	
+
 
 	public void Update () {
 		calculateCurrentQuad ();
-		for (int i = 0; i < maxNumBirds; i++) {
-			wait ();
-			if (_numBirds [i] == null) {
-                //Birds starting and ending coordinates
-                Coordinates origin = getCoordinates();
-				Bird = Instantiate (_BirdPrefab) as GameObject;
-				transform.Rotate (180, 0, 0);
-				_numBirds [i] = Bird;
-				Bird.transform.position = new Vector3 (origin.x, origin.y, enemySpawnPlane);
-				Bird.GetComponent<BirdMove> ().quad = quad;
+		CheckEntityStatus (ref _birdList, maxNumBirds, _BirdPrefab);
+		CheckEntityStatus (ref _V3BirdFormationList, maxNumV3BirdFormations, _V3BirdFormationPrefab, true);
+    }
+
+	public void Spawn(out GameObject[] list, int numEntities, GameObject prefab, bool isGroup = false){
+		list = new GameObject[numEntities];
+		for (int i = 0; i < numEntities; i++) {
+			InstantiatePrefab(ref list, prefab, i, isGroup);
+		}
+	}
+
+	private void CheckEntityStatus(ref GameObject[] list, int numEntities, GameObject prefab, bool isGroup = false){
+		for (int i = 0; i < numEntities; i++) {
+			if (list[i] == null) {
+				InstantiatePrefab (ref list, prefab, i, isGroup);
 			}
 		}
-    }
+	}
+
+	private void InstantiatePrefab(ref GameObject[] list, GameObject prefab, int i, bool isGroup){
+		StartCoroutine(wait ());
+		//Objects starting and ending coordinates
+		Coordinates origin = getCoordinates ();
+		GameObject entity = Instantiate (prefab) as GameObject;
+		transform.Rotate (180, 0, 0);
+		list [i] = entity;
+		entity.transform.position = new Vector3 (origin.x, origin.y, enemySpawnPlane);
+		entity.GetComponent<BirdMove> ().quad = quad;
+		if (isGroup) {
+			//foreach child gameobject, set self flight to false.
+			foreach (Transform child in entity.transform) {
+				Destroy(child.GetComponent<BirdMove>());
+				if (debugMode) {
+					Debug.Log ("Destroying child BirdMove script");
+				}
+			}
+			//Destroy(entity.GetComponentInChildren<BirdMove>());
+		}
+	}
+
+//	private void DestroyCurrentEntities(ref GameObject[] list, int numEntities){
+//		for (int i = 0; i < numEntities; i++) {
+//			Destroy (list [i]);
+//		}
+//	}
 
 
 	// Calclulates the quadrent that we should spawn enemies in
 	private void calculateCurrentQuad() {
 		int result = (int)Time.time % 60;
 		if (debugMode) {
-			Debug.Log ("Game time:" + result);
+			//Debug.Log ("Game time:" + result);
 		}
 		if (result > 45) {
 			quad = 4;
@@ -67,7 +107,9 @@ public class SceneController : MonoBehaviour {
 	}
 
 	private IEnumerator wait(){
-		yield return new WaitForSeconds (10);
+		Debug.Log (Time.time);
+		yield return new WaitForSeconds (1);
+		print (Time.time);
 	}
 
     //generates coordinates for the enemies to spawn on
