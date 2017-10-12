@@ -20,49 +20,76 @@ public class SceneController : MonoBehaviour {
 	private GameObject Bird;
 	public int maxNumBirds = 5;
 	private GameObject[] _birdList;
+	private float nextBirdSpawnTime;
 
 	// V3BirdFormations
 	[SerializeField] private GameObject _V3BirdFormationPrefab;
 	private GameObject V3BirdFormation;
 	public int maxNumV3BirdFormations = 5;
 	private GameObject[] _V3BirdFormationList;
+	private float nextV3BirdSpawnTime;
 
     public float enemySpawnPlane = 30f;
 	private int quad;
 	public int frequency = 15;
 	public bool debugMode = true;
+	public int delayBetweenInstantiate = 1;
 
 	public void Start () {
 		//Order matters
+		nextBirdSpawnTime = 0;
+		nextV3BirdSpawnTime = 1;
 		quad = 1;
-		Spawn (out _birdList, maxNumBirds, _BirdPrefab);  //Bird
-		Spawn (out _V3BirdFormationList, maxNumV3BirdFormations, _V3BirdFormationPrefab, true);  //V3BirdFormation
+		Spawn (out _birdList, maxNumBirds, _BirdPrefab, ref nextBirdSpawnTime);  //Bird
+		Spawn (out _V3BirdFormationList, maxNumV3BirdFormations, _V3BirdFormationPrefab, ref nextV3BirdSpawnTime, true);  //V3BirdFormation
 	}
 
 
 	public void Update () {
 		calculateCurrentQuad ();
-		CheckEntityStatus (ref _birdList, maxNumBirds, _BirdPrefab);
-		CheckEntityStatus (ref _V3BirdFormationList, maxNumV3BirdFormations, _V3BirdFormationPrefab, true);
+		Debug.Log (nextBirdSpawnTime);
+		CheckEntityStatus (ref _birdList, maxNumBirds, _BirdPrefab, ref nextBirdSpawnTime);
+		CheckEntityStatus (ref _V3BirdFormationList, maxNumV3BirdFormations, _V3BirdFormationPrefab, ref nextV3BirdSpawnTime, true);
     }
 
-	public void Spawn(out GameObject[] list, int numEntities, GameObject prefab, bool isGroup = false){
-		list = new GameObject[numEntities];
-		for (int i = 0; i < numEntities; i++) {
-			InstantiatePrefab(ref list, prefab, i, isGroup);
+	public void Spawn(out GameObject[] list, int numEntities, GameObject prefab, ref float nextSpawnTime, bool isGroup = false){
+		if (debugMode) {
+			Debug.Log ("Creating array with " + numEntities + "objects");
 		}
-	}
 
-	private void CheckEntityStatus(ref GameObject[] list, int numEntities, GameObject prefab, bool isGroup = false){
+		list = new GameObject[numEntities];
+
+		// Spread the instantiations out
 		for (int i = 0; i < numEntities; i++) {
-			if (list[i] == null) {
+			if (Time.time > nextSpawnTime) {
+				nextSpawnTime = Time.time + delayBetweenInstantiate;
 				InstantiatePrefab (ref list, prefab, i, isGroup);
 			}
 		}
 	}
 
+	private void CheckEntityStatus(ref GameObject[] list, int numEntities, GameObject prefab, ref float nextSpawnTime, bool isGroup = false){
+		// Spread the instantiations out
+		for (int i = 0; i < numEntities; i++) {
+			if (list[i] == null) {
+				if (debugMode) {
+					Debug.Log ("currentTime: " + Time.time + " nextSpawnTime for current object: " + nextSpawnTime);
+				}
+				if (Time.time > nextSpawnTime) {
+					nextSpawnTime = Time.time + delayBetweenInstantiate;
+					InstantiatePrefab (ref list, prefab, i, isGroup);
+					if (debugMode) {
+						Debug.Log ("nextSpawnTime is now set to: " + nextSpawnTime);
+					}
+				}
+			}
+		}
+	}
+
 	private void InstantiatePrefab(ref GameObject[] list, GameObject prefab, int i, bool isGroup){
-		StartCoroutine(wait ());
+		// Delay so that instantiations are not instantaneous
+		// yield return new WaitForSeconds (delayTime);
+
 		//Objects starting and ending coordinates
 		Coordinates origin = getCoordinates ();
 		GameObject entity = Instantiate (prefab) as GameObject;
@@ -93,7 +120,7 @@ public class SceneController : MonoBehaviour {
 	private void calculateCurrentQuad() {
 		int result = (int)Time.time % 60;
 		if (debugMode) {
-			//Debug.Log ("Game time:" + result);
+			Debug.Log ("Game time:" + result);
 		}
 		if (result > 45) {
 			quad = 4;
@@ -107,9 +134,9 @@ public class SceneController : MonoBehaviour {
 	}
 
 	private IEnumerator wait(){
-		Debug.Log (Time.time);
-		yield return new WaitForSeconds (1);
-		print (Time.time);
+		Debug.Log ("wait start time: " + Time.time);
+		yield return new WaitForSeconds (10);
+		print ("wait end time: " + Time.time);
 	}
 
     //generates coordinates for the enemies to spawn on
