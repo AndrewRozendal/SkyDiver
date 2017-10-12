@@ -67,7 +67,7 @@ public class BirdMove : MonoBehaviour {
 		}
 
 		if (state == BirdState.Dead) {
-			Die ();
+			this.GetComponent<EnemyCollisionDetector> ().die();
 		}
 	}
 
@@ -75,14 +75,6 @@ public class BirdMove : MonoBehaviour {
 	private void ChangeState(BirdState state){
 		this.state = state;
 		Debug.Log ("State= " + state);
-	}
-
-    //Destroys the GameObject
-	private void Die (){
-		Destroy (this.gameObject);
-		if (debugMode) {
-			Debug.Log ("Dead");
-		}
 	}
 
     private void Move()

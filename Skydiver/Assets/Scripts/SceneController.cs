@@ -31,9 +31,9 @@ public class SceneController : MonoBehaviour {
 
     public float enemySpawnPlane = 30f;
 	private int quad;
-	public int frequency = 15;
+	public float frequency = 4;
 	public bool debugMode = true;
-	public int delayBetweenInstantiate = 1;
+	public float delayBetweenInstantiate = 1;
 
 	public void Start () {
 		//Order matters
@@ -47,7 +47,9 @@ public class SceneController : MonoBehaviour {
 
 	public void Update () {
 		calculateCurrentQuad ();
-		Debug.Log (nextBirdSpawnTime);
+		if (debugMode) {
+			Debug.Log ("nextBirdSpawnTime: " + nextBirdSpawnTime);
+		}
 		CheckEntityStatus (ref _birdList, maxNumBirds, _BirdPrefab, ref nextBirdSpawnTime);
 		CheckEntityStatus (ref _V3BirdFormationList, maxNumV3BirdFormations, _V3BirdFormationPrefab, ref nextV3BirdSpawnTime, true);
     }
@@ -64,6 +66,7 @@ public class SceneController : MonoBehaviour {
 			if (Time.time > nextSpawnTime) {
 				nextSpawnTime = Time.time + delayBetweenInstantiate;
 				InstantiatePrefab (ref list, prefab, i, isGroup);
+				calculateCurrentQuad ();
 			}
 		}
 	}
@@ -78,6 +81,7 @@ public class SceneController : MonoBehaviour {
 				if (Time.time > nextSpawnTime) {
 					nextSpawnTime = Time.time + delayBetweenInstantiate;
 					InstantiatePrefab (ref list, prefab, i, isGroup);
+					calculateCurrentQuad ();
 					if (debugMode) {
 						Debug.Log ("nextSpawnTime is now set to: " + nextSpawnTime);
 					}
@@ -118,19 +122,17 @@ public class SceneController : MonoBehaviour {
 
 	// Calclulates the quadrent that we should spawn enemies in
 	private void calculateCurrentQuad() {
-		int result = (int)Time.time % 60;
-		if (debugMode) {
-			Debug.Log ("Game time:" + result);
-		}
-		if (result > 45) {
-			quad = 4;
-		} else if (result > 30) {
-			quad = 3;
-		} else if (result > 15) {
-			quad = 2;
-		} else {
+		quad += 1;
+		if (quad > 4) {
 			quad = 1;
 		}
+//		if (Time.time > lastQuadrantChange) {
+//			lastQuadrantChange = Time.time + delayBetweenQuadrantChange;
+//			quad += 1;
+//			if (quad > 4) {
+//				quad = 1;
+//			}
+//		}
 	}
 
 	private IEnumerator wait(){
@@ -169,6 +171,18 @@ public class SceneController : MonoBehaviour {
 			
         Coordinates origin = new Coordinates(x, y);
         return origin;
+	}
+
+	private void gameOver(){
+		Time.timeScale = 0;
+	}
+
+	void Awake() {
+		Messenger.AddListener (GameEvent.PLAYER_DEAD, gameOver);
+	}
+
+	void Destroy(){
+		Messenger.RemoveListener (GameEvent.PLAYER_DEAD, gameOver);
 	}
 		
 }

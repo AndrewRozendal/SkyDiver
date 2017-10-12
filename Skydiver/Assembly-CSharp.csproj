@@ -47,10 +47,14 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\BirdMove.cs" />
+     <Compile Include="Assets\Scripts\EnemyCollisionDetector.cs" />
      <Compile Include="Assets\Scripts\FPSInput.cs" />
+     <Compile Include="Assets\Scripts\GameEvent.cs" />
      <Compile Include="Assets\Scripts\HighScoreScreen.cs" />
      <Compile Include="Assets\Scripts\MainMenu.cs" />
+     <Compile Include="Assets\Scripts\Messenger.cs" />
      <Compile Include="Assets\Scripts\OptionsMenu.cs" />
+     <Compile Include="Assets\Scripts\PlayerCharacter.cs" />
      <Compile Include="Assets\Scripts\SceneController.cs" />
      <Compile Include="Assets\Scripts\SelectLevelMenu.cs" />
      <Compile Include="Assets\Scripts\StartScreen.cs" />
