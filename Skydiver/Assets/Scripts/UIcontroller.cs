@@ -6,12 +6,17 @@ using UnityEngine.UI;
 public class UIcontroller : MonoBehaviour {
 
 	public bool won = false;
+	private float score;
 	private float time;
+	private int coinsCollected;
     [SerializeField]private Text timerValue;
+	[SerializeField] private Text coinValue;
    
 
     void start() {
 		time = Time.time;
+		score = 0f;
+		coinsCollected = 0;
     }
 	
 	// Update is called once per frame
@@ -20,6 +25,7 @@ public class UIcontroller : MonoBehaviour {
 			time = Time.timeSinceLevelLoad;
 			FormatTime ();
 		}
+		displayCoinsCollected();
 	}
 
 	private void FormatTime(){
@@ -28,5 +34,21 @@ public class UIcontroller : MonoBehaviour {
 		int ms = (int)(time * 1000) % 1000;
 		string currentTime = string.Format("{0:00}:{1:00}:{2:00}", minutes, seconds, ms);
 		timerValue.text = "Time: " + currentTime;
+	}
+	
+	private void displayCoinsCollected(){
+		coinValue.text = "Coins Collected: " + coinsCollected;
+	}
+	
+	private void OnCoinCollected(){
+		coinsCollected++;
+	}
+	
+	void Awake(){
+		Messenger.AddListener (GameEvent.COIN_COLLECTED, OnCoinCollected);
+	}
+	
+	void OnDestroy(){
+		Messenger.RemoveListener (GameEvent.COIN_COLLECTED, OnCoinCollected);
 	}
 }

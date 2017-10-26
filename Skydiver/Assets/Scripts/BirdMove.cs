@@ -64,9 +64,8 @@ public class BirdMove : MonoBehaviour {
             {
                 Move();
             }	
-		}
-
-		if (state == BirdState.Dead) {
+		} else {
+			// Bird is dead
 			this.GetComponent<EnemyCollisionDetector> ().die();
 		}
 	}

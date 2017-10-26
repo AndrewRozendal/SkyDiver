@@ -17,17 +17,26 @@ public class SceneController : MonoBehaviour {
 
 	// Birds
     [SerializeField] private GameObject _BirdPrefab;
-	private GameObject Bird;
+	//private GameObject Bird;
 	public int maxNumBirds = 5;
 	private GameObject[] _birdList;
 	private float nextBirdSpawnTime;
 
 	// V3BirdFormations
 	[SerializeField] private GameObject _V3BirdFormationPrefab;
-	private GameObject V3BirdFormation;
+	//private GameObject V3BirdFormation;
 	public int maxNumV3BirdFormations = 5;
 	private GameObject[] _V3BirdFormationList;
 	private float nextV3BirdSpawnTime;
+	
+	//Coins
+	[SerializeField] private GameObject _CoinPrefab;
+	//private GameObject Coin;
+	public int maxNumCoins = 5;
+	private GameObject[] _coinList;
+	private float nextCoinSpawnTime;
+	
+	
 
     public float enemySpawnPlane = 30f;
 	private int quad;
@@ -39,9 +48,11 @@ public class SceneController : MonoBehaviour {
 		//Order matters
 		nextBirdSpawnTime = 0;
 		nextV3BirdSpawnTime = 1;
+		nextCoinSpawnTime = 2;
 		quad = 1;
 		Spawn (out _birdList, maxNumBirds, _BirdPrefab, ref nextBirdSpawnTime);  //Bird
 		Spawn (out _V3BirdFormationList, maxNumV3BirdFormations, _V3BirdFormationPrefab, ref nextV3BirdSpawnTime, true);  //V3BirdFormation
+		Spawn (out _coinList, maxNumCoins, _CoinPrefab, ref nextCoinSpawnTime);  //Coins
 	}
 
 
@@ -52,6 +63,7 @@ public class SceneController : MonoBehaviour {
 		}
 		CheckEntityStatus (ref _birdList, maxNumBirds, _BirdPrefab, ref nextBirdSpawnTime);
 		CheckEntityStatus (ref _V3BirdFormationList, maxNumV3BirdFormations, _V3BirdFormationPrefab, ref nextV3BirdSpawnTime, true);
+		CheckEntityStatus (ref _coinList, maxNumCoins, _CoinPrefab, ref nextCoinSpawnTime);
     }
 
 	public void Spawn(out GameObject[] list, int numEntities, GameObject prefab, ref float nextSpawnTime, bool isGroup = false){
@@ -100,7 +112,13 @@ public class SceneController : MonoBehaviour {
 		transform.Rotate (180, 0, 0);
 		list [i] = entity;
 		entity.transform.position = new Vector3 (origin.x, origin.y, enemySpawnPlane);
-		entity.GetComponent<BirdMove> ().quad = quad;
+		if (entity.GetComponent<BirdMove> () != null) {
+			entity.GetComponent<BirdMove> ().quad = quad;
+		} else if (entity.GetComponent<CollectibleMove> () != null) {
+			// do nothing for now
+		} else {
+			Debug.LogError ("unexpected entity with neither BirdMove or CollectibleMove");
+		}
 		if (isGroup) {
 			//foreach child gameobject, set self flight to false.
 			foreach (Transform child in entity.transform) {
