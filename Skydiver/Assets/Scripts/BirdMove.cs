@@ -18,7 +18,6 @@ public class BirdMove : MonoBehaviour {
 
 	// Use this for initialization
 	public void Start () {
-        maxDistance = 30;
         maxSpeed = 0.2f;
         minSpeed = 0.05f;
 		state = BirdState.Alive;

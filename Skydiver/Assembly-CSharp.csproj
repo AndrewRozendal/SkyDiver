@@ -47,9 +47,12 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\BirdMove.cs" />
+     <Compile Include="Assets\Scripts\CollectibleCollisionDetector.cs" />
+     <Compile Include="Assets\Scripts\CollectibleMove.cs" />
      <Compile Include="Assets\Scripts\EnemyCollisionDetector.cs" />
      <Compile Include="Assets\Scripts\FPSInput.cs" />
      <Compile Include="Assets\Scripts\GameEvent.cs" />
+     <Compile Include="Assets\Scripts\GroundMove.cs" />
      <Compile Include="Assets\Scripts\HighScoreScreen.cs" />
      <Compile Include="Assets\Scripts\MainMenu.cs" />
      <Compile Include="Assets\Scripts\Messenger.cs" />

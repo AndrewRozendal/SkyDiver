@@ -8,11 +8,11 @@ public class FPSInput : MonoBehaviour {
     public float speed = 5.0f;
 	public float pushForce = 5.0f;
 
-    //Screen boundaries
-    public float maxXPosition = 9.5f;
-    public float minXPosition = -9.5f;
-    public float maxYPosition = 9.5f;
-    public float minYPosition = -9.5f;
+    //Screen boundaries 480 X 320
+    private float maxXPosition = 7.5f;
+	private float minXPosition = -7.5f;
+	private float maxYPosition = 5f;
+	private float minYPosition = -5f;
 
     void Start () {
         charController = GetComponent<CharacterController>();
