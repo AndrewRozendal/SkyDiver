@@ -199,12 +199,12 @@ public class SceneController : MonoBehaviour {
 		Time.timeScale = 0;
 	}
 
-	void Awake() {
+    void Awake() {
 		Messenger.AddListener (GameEvent.PLAYER_DEAD, gameOver);
-	}
+    }
 
 	void Destroy(){
 		Messenger.RemoveListener (GameEvent.PLAYER_DEAD, gameOver);
-	}
+    }
 		
 }

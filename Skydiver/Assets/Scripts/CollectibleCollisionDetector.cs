@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CollectibleCollisionDetector : MonoBehaviour {
 
-	public bool debugMode = true;
+    public bool debugMode;
 	// Use this for initialization
 	void Start () {
 		
