@@ -6,12 +6,11 @@ public enum BirdState {Dead, Alive};
 
 public class BirdMove : MonoBehaviour {
 
-    public bool debugMode = true;
-    public float maxDistance = 10f;
+    public bool debugMode;
+    public float maxDistance { get; set; }
 	private float birdSpeed;
-    public float maxSpeed = 2f;
-    public float minSpeed = 1f;
-	public float pushForce = 5.0f;
+    private float maxSpeed;
+    private float minSpeed;
 	private BirdState state;
     private Vector3 destination;
 
@@ -19,6 +18,9 @@ public class BirdMove : MonoBehaviour {
 
 	// Use this for initialization
 	public void Start () {
+        maxDistance = 30;
+        maxSpeed = 0.2f;
+        minSpeed = 0.05f;
 		state = BirdState.Alive;
 		birdSpeed = Random.Range (minSpeed, maxSpeed);
         destination = getDestination();

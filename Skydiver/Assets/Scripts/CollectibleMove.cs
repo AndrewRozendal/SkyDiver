@@ -5,17 +5,19 @@ using UnityEngine;
 public enum CoinState {Inactive, Active};
 
 public class CollectibleMove : MonoBehaviour {
-	public bool debugMode = true;
+	public bool debugMode;
 	private CoinState state;
 	private float coinSpeed;
-	public float maxDistance = 10f;
-	public float maxSpeed = 2f;
-    public float minSpeed = 1f;
+    public float maxDistance { get; set; }
+    private float maxSpeed;
+    private float minSpeed;
 	private Vector3 destination;
 	private Transform location;
 	
 	// Use this for initialization
 	void Start () {
+        maxSpeed = 0.2f;
+        minSpeed = 0.01f;
 		state = CoinState.Active;
 		coinSpeed = Random.Range(minSpeed, maxSpeed);
 		if (debugMode) {

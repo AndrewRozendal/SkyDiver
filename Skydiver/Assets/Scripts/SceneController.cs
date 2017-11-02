@@ -112,10 +112,14 @@ public class SceneController : MonoBehaviour {
 		transform.Rotate (180, 0, 0);
 		list [i] = entity;
 		entity.transform.position = new Vector3 (origin.x, origin.y, enemySpawnPlane);
-		if (entity.GetComponent<BirdMove> () != null) {
-			entity.GetComponent<BirdMove> ().quad = quad;
-		} else if (entity.GetComponent<CollectibleMove> () != null) {
-			// do nothing for now
+        if (entity.GetComponent<BirdMove> () != null) {
+            BirdMove entityMove = entity.GetComponent<BirdMove>();
+            entityMove.quad = quad;
+            entityMove.maxDistance = enemySpawnPlane; // you can only go as far as the spawn plane in any direction
+        } else if (entity.GetComponent<CollectibleMove> () != null) {
+            // do nothing for now
+            CollectibleMove entityMove = entity.GetComponent<CollectibleMove>();
+            entityMove.maxDistance = enemySpawnPlane;
 		} else {
 			Debug.LogError ("unexpected entity with neither BirdMove or CollectibleMove");
 		}
